@@ -12,17 +12,17 @@
 /* Layout: boarding-pass header + sticky section nav; itinerary as a tide-line timeline per day */
 :root{
   --bg:#eef3f5; --surface:#ffffff; --ink:#14303d; --muted:#5b7380; --line:#d3e0e6;
-  --sea:#1d6f8f; --sea-soft:#dcedf3; --sun:#f0a14a; --sun-soft:#fdecd6;
+  --sea:#1d6f8f; --pass:#1d6f8f; --sea-soft:#dcedf3; --sun:#f0a14a; --sun-soft:#fdecd6;
   --purple:#7a4fc4; --purple-soft:#ece4fa; --blue:#2f6fd6; --blue-soft:#e1ebfb; --warn:#c2512f; --warn-soft:#fbe5dd; --ok:#2f8a5c;
   --display:"LXGW WenKai TC","Noto Sans TC",serif; --body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif; --mono:"DM Mono",ui-monospace,Menlo,monospace;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#0c1a21; --surface:#13252e; --ink:#e3eef2; --muted:#8fa8b3; --line:#244251;
-  --sea:#5fb6d6; --sea-soft:#173947; --sun:#f3b36a; --sun-soft:#3a2b19;
+  --sea:#5fb6d6; --pass:#17536b; --sea-soft:#173947; --sun:#f3b36a; --sun-soft:#3a2b19;
   --purple:#b79af0; --purple-soft:#2c2142; --blue:#7fa9f0; --blue-soft:#1b2a45; --warn:#ef8d6c; --warn-soft:#3b2019; --ok:#6cc79a; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0c1a21; --surface:#13252e; --ink:#e3eef2; --muted:#8fa8b3; --line:#244251;
-  --sea:#5fb6d6; --sea-soft:#173947; --sun:#f3b36a; --sun-soft:#3a2b19;
+  --sea:#5fb6d6; --pass:#17536b; --sea-soft:#173947; --sun:#f3b36a; --sun-soft:#3a2b19;
   --purple:#b79af0; --purple-soft:#2c2142; --blue:#7fa9f0; --blue-soft:#1b2a45; --warn:#ef8d6c; --warn-soft:#3b2019; --ok:#6cc79a; color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.6}
@@ -33,7 +33,7 @@ h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
 .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
 
 /* hero / boarding pass */
-.pass{background:var(--sea);color:#fff;border-radius:18px;overflow:hidden;position:relative}
+.pass{background:var(--pass);color:#fff;border-radius:18px;overflow:hidden;position:relative}
 .pass-top{padding:20px 20px 16px;display:grid;gap:10px}
 .eyebrow{font-size:12px;letter-spacing:.12em;opacity:.8}
 .pass h1{font-size:clamp(30px,8vw,44px);line-height:1.1;font-weight:700}
@@ -162,6 +162,32 @@ section:not([hidden]){animation:rise .35s ease both}
 .fx{position:fixed;left:0;top:0;pointer-events:none;z-index:30;font-size:18px;will-change:transform}
 
 
+/* ---- flip card ---- */
+.flip{perspective:1200px;cursor:pointer;border-radius:18px;outline:none}
+.flip:focus-visible{outline:2px solid var(--sun);outline-offset:3px}
+.flip-inner{position:relative;transform-style:preserve-3d}
+.flip .pass{-webkit-backface-visibility:hidden;backface-visibility:hidden}
+.flip-inner.flipped{transform:rotateY(180deg);animation:flipIn .55s both}
+.flip-inner.unflip{transform:rotateY(0);animation:flipOut .55s both}
+@keyframes flipIn{0%{transform:rotateY(0);animation-timing-function:cubic-bezier(.5,0,.9,.6)}50%{transform:translateY(-8px) rotateY(90deg);animation-timing-function:cubic-bezier(.1,.5,.4,1)}85%{transform:translateY(0) rotateY(186deg)}100%{transform:rotateY(180deg)}}
+@keyframes flipOut{0%{transform:rotateY(180deg);animation-timing-function:cubic-bezier(.5,0,.9,.6)}50%{transform:translateY(-8px) rotateY(90deg);animation-timing-function:cubic-bezier(.1,.5,.4,1)}85%{transform:translateY(0) rotateY(-6deg)}100%{transform:rotateY(0)}}
+/* swap faces exactly at 90deg so nothing from the other side shows through */
+.flip .back{opacity:0}
+.flipped .front{opacity:0;animation:faceOut .55s both}
+.flipped .back{opacity:1;animation:faceIn .55s both}
+.unflip .front{animation:faceIn .55s both}
+.unflip .back{animation:faceOut .55s both}
+@keyframes faceOut{0%,49.9%{opacity:1}50%,100%{opacity:0}}
+@keyframes faceIn{0%,49.9%{opacity:0}50%,100%{opacity:1}}
+.pass.back{position:absolute;inset:0;transform:rotateY(180deg);display:grid;align-content:center;justify-items:center;gap:8px;padding:18px 16px 26px;text-align:center}
+.pass.back h2{font-size:clamp(24px,6vw,32px)}
+.buddies{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;width:100%;max-width:440px}
+.buddy{display:grid;justify-items:center;gap:2px;font-size:14px;font-weight:700;cursor:pointer}
+.buddy svg{width:min(100px,19vw);height:auto;display:block}
+.flipped .buddy svg{animation:buddyIn .55s cubic-bezier(.3,1.8,.5,1) both;animation-delay:calc(.3s + var(--d) * .07s)}
+.flipped .buddy.wiggle svg{animation:wiggle .5s ease;animation-delay:0s}
+@keyframes buddyIn{from{transform:scale(.2) translateY(20px);opacity:0}}
+@keyframes wiggle{20%{transform:rotate(-10deg) scale(1.08)}50%{transform:rotate(8deg) scale(1.08)}80%{transform:rotate(-4deg)}}
 /* ---- inline day scene ---- */
 .scene{position:relative;width:100%;aspect-ratio:420/150;max-width:100%;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:var(--sea-soft)}
 .scene svg{width:100%;height:100%;display:block;animation:scenein .45s cubic-bezier(.3,1.4,.5,1)}
@@ -202,7 +228,9 @@ section:not([hidden]){animation:rise .35s ease both}
 </head>
 <body>
 <div class="wrap">
-  <header class="pass">
+  <div class="flip" id="flip" role="button" tabindex="0" aria-label="翻面看同行夥伴">
+  <div class="flip-inner" id="flipInner">
+  <header class="pass front">
     <svg class="wave" viewBox="0 0 200 120" aria-hidden="true"><path d="M0 60 Q25 30 50 60 T100 60 T150 60 T200 60" fill="none" stroke="#fff" stroke-width="6"/><path d="M0 90 Q25 60 50 90 T100 90 T150 90 T200 90" fill="none" stroke="#fff" stroke-width="6"/></svg>
     <div class="pass-top">
       <div class="eyebrow">BUSAN · 2026.11.14 — 11.20 · 6 晚 7 天</div>
@@ -220,6 +248,14 @@ section:not([hidden]){animation:rise .35s ease both}
     </div>
     <div class="sea" aria-hidden="true"></div>
   </header>
+  <div class="pass back" aria-hidden="true">
+    <div class="eyebrow">TRAVEL BUDDIES · 4 人同行</div>
+    <h2>同行夥伴</h2>
+    <div class="buddies"><div class="buddy" style="--d:0"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M12 60 Q10 14 50 12 Q90 14 88 60 Q88 74 80 78 L20 78 Q12 74 12 60Z" fill="#2b2b33"/><ellipse cx="50" cy="58" rx="29" ry="27" fill="#ffe0c8"/><ellipse cx="29" cy="70" rx="5" ry="3" fill="#ffb3b3" opacity=".75"/><ellipse cx="71" cy="70" rx="5" ry="3" fill="#ffb3b3" opacity=".75"/><ellipse cx="38" cy="61" rx="2.6" ry="3.2" fill="#2b2b33"/><ellipse cx="62" cy="61" rx="2.6" ry="3.2" fill="#2b2b33"/><path d="M45 74 Q50 78 55 74" stroke="#6b3a3a" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M14 60 Q12 14 50 13 Q88 14 86 60 L79 60 Q79 52 77 47.5 Q73.0 43.6 71 41.5 Q69.0 44.3 65 49.5 Q61.0 45.0 59 42.5 Q57.0 44.6 53 48.5 Q50.5 45.2 50 43.5 Q48.5 45.6 45 49.5 Q41.0 44.3 39 41.5 Q36.5 44.0 32 48.5 Q28.5 45.2 27 43.5 Q26.0 45.2 23 48.5 Q21 52 21 60Z" fill="#2b2b33"/><path d="M30 24 Q38 17 48 17" stroke="#fff" stroke-width="3" opacity=".35" fill="none" stroke-linecap="round"/><g fill="#fff" fill-opacity=".18" stroke="#2b2b33" stroke-width="2.2"><circle cx="38" cy="61" r="10.5"/><circle cx="62" cy="61" r="10.5"/></g><path d="M48.5 60 Q50 57.5 51.5 60" stroke="#2b2b33" stroke-width="2" fill="none"/></svg><span>菜菜</span></div><div class="buddy" style="--d:1"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M12 56 Q10 12 50 11 Q90 12 88 56 L92 92 Q90 98 82 97 L18 97 Q10 98 8 92Z" fill="#8a5a3b"/><ellipse cx="50" cy="58" rx="29" ry="27" fill="#ffe0c8"/><ellipse cx="29" cy="70" rx="5" ry="3" fill="#ffb3b3" opacity=".75"/><ellipse cx="71" cy="70" rx="5" ry="3" fill="#ffb3b3" opacity=".75"/><ellipse cx="38" cy="61" rx="6" ry="7.5" fill="#5a3a28"/><circle cx="36" cy="58" r="2.4" fill="#fff"/><circle cx="40" cy="63.5" r="1.1" fill="#fff"/><ellipse cx="62" cy="61" rx="6" ry="7.5" fill="#5a3a28"/><circle cx="60" cy="58" r="2.4" fill="#fff"/><circle cx="64" cy="63.5" r="1.1" fill="#fff"/><path d="M44 73 Q50 81 56 73Z" fill="#e0605f" stroke="#6b3a3a" stroke-width="1.5" stroke-linejoin="round"/><path d="M14 60 Q12 14 50 13 Q88 14 86 60 L79 60 Q79 52 77 50.5 Q73.5 46.0 72 43.5 Q70.5 46.3 67 51.5 Q63.0 47.0 61 44.5 Q59.5 46.2 56 49.5 Q52.5 41.7 51 37.5 Q49.5 41.7 46 49.5 Q42.0 46.2 40 44.5 Q38.0 47.0 34 51.5 Q30.5 46.3 29 43.5 Q27.0 46.0 23 50.5 Q21 52 21 60Z" fill="#8a5a3b"/><path d="M30 24 Q38 17 48 17" stroke="#fff" stroke-width="3" opacity=".35" fill="none" stroke-linecap="round"/></svg><span>六六</span></div><div class="buddy" style="--d:2"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M12 56 Q10 12 50 11 Q90 12 88 56 L92 92 Q90 98 82 97 L18 97 Q10 98 8 92Z" fill="#2b2b33"/><ellipse cx="50" cy="58" rx="29" ry="27" fill="#ffe0c8"/><ellipse cx="29" cy="70" rx="5" ry="3" fill="#ffb3b3" opacity=".75"/><ellipse cx="71" cy="70" rx="5" ry="3" fill="#ffb3b3" opacity=".75"/><ellipse cx="38" cy="61" rx="6" ry="7.5" fill="#2b2b33"/><circle cx="36" cy="58" r="2.4" fill="#fff"/><circle cx="40" cy="63.5" r="1.1" fill="#fff"/><ellipse cx="62" cy="61" rx="6" ry="7.5" fill="#2b2b33"/><circle cx="60" cy="58" r="2.4" fill="#fff"/><circle cx="64" cy="63.5" r="1.1" fill="#fff"/><path d="M45 74 Q50 78 55 74" stroke="#6b3a3a" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M14 60 Q12 14 50 13 Q88 14 86 60 L79 60 Q79 52 77 50.5 Q73.5 46.0 72 43.5 Q70.5 46.3 67 51.5 Q63.0 47.0 61 44.5 Q59.5 46.2 56 49.5 Q52.5 41.7 51 37.5 Q49.5 41.7 46 49.5 Q42.0 46.2 40 44.5 Q38.0 47.0 34 51.5 Q30.5 46.3 29 43.5 Q27.0 46.0 23 50.5 Q21 52 21 60Z" fill="#2b2b33"/><path d="M30 24 Q38 17 48 17" stroke="#fff" stroke-width="3" opacity=".35" fill="none" stroke-linecap="round"/><g fill="#fff" fill-opacity=".18" stroke="#2b2b33" stroke-width="2.2"><rect x="27" y="52" width="22" height="18" rx="7"/><rect x="51" y="52" width="22" height="18" rx="7"/></g><path d="M49 60 Q50 58 51 60" stroke="#2b2b33" stroke-width="2" fill="none"/></svg><span>七七</span></div><div class="buddy" style="--d:3"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M12 56 Q10 12 50 11 Q90 12 88 56 Q91 84 95 100 L5 100 Q9 84 12 56Z" fill="#2b2b33"/><ellipse cx="50" cy="58" rx="29" ry="27" fill="#ffe0c8"/><ellipse cx="29" cy="70" rx="5" ry="3" fill="#ffb3b3" opacity=".75"/><ellipse cx="71" cy="70" rx="5" ry="3" fill="#ffb3b3" opacity=".75"/><ellipse cx="38" cy="61" rx="3.8" ry="4.6" fill="#2b2b33"/><circle cx="37" cy="59.4" r="1.5" fill="#fff"/><ellipse cx="62" cy="61" rx="3.8" ry="4.6" fill="#2b2b33"/><circle cx="61" cy="59.4" r="1.5" fill="#fff"/><path d="M45 74 Q50 78 55 74" stroke="#6b3a3a" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M14 60 Q12 14 50 13 Q88 14 86 60 L79 60 Q79 52 77 50.5 Q73.5 46.0 72 43.5 Q70.5 46.3 67 51.5 Q63.0 47.0 61 44.5 Q59.5 46.2 56 49.5 Q52.5 41.7 51 37.5 Q49.5 41.7 46 49.5 Q42.0 46.2 40 44.5 Q38.0 47.0 34 51.5 Q30.5 46.3 29 43.5 Q27.0 46.0 23 50.5 Q21 52 21 60Z" fill="#2b2b33"/><path d="M30 24 Q38 17 48 17" stroke="#fff" stroke-width="3" opacity=".35" fill="none" stroke-linecap="round"/></svg><span>扣扣</span></div></div>
+    <div class="sea"></div>
+  </div>
+  </div>
+</div>
 
   <nav role="tablist" aria-label="分頁">
     <button role="tab" data-tab="plan" aria-selected="true">每日行程</button>
@@ -369,9 +405,9 @@ const PACK = {
  "隨身・重要物品":["護照","網卡／eSIM","家鑰匙","錢包（台幣／韓元／信用卡／金融卡／WOWPASS）","身分證／健保卡","夾鏈袋（隨身液體用）"],
  "隨身・備用藥品":["暈機藥","胃藥","感冒藥（或普拿疼）","人工淚液"],
  "隨身・女性用品":["梳子","髮圈","髮捲","化妝包","衛生棉"],
- "隨身・電子產品":["行動電源","充電線（Type-C／Lightning）","藍芽耳機","小電風扇","萬用轉接頭"],
+ "隨身・電子產品":["行動電源","充電線（Type-C／Lightning）","藍芽耳機","小電風扇","萬用轉接頭","手機架"],
  "隨身・其他":["衛生紙","濕紙巾","杯套","雨傘","防曬乳","眼鏡／隱眼"],
- "託運・衣服":["內衣／內褲","短袖","短褲／長褲","薄外套","襪子"],
+ "託運・衣服":["內衣／內褲","短袖","短褲／長褲","薄外套","襪子","泳衣"],
  "託運・盥洗用品":["牙刷牙膏（備用）","牙線","小毛巾（備用）","洗面乳／卸妝紙巾","洗臉巾","盥洗旅行組"],
  "託運・保養":["化妝水","精華保濕液","保濕乳"],
  "託運・其他":["垃圾袋（裝髒衣服）"]
@@ -404,7 +440,7 @@ tabs.forEach(b=>b.addEventListener("click",()=>showTab(b.dataset.tab)));
 let cur = Math.max(0,DAYS.findIndex(d=>d.date===todayKST()));
 const isToday = i => DAYS[i].date===todayKST();
 function renderDays(){
-  $("#days").innerHTML = DAYS.map((d,i)=>`<button class="daytab" role="tab" aria-selected="${i===cur}" data-i="${i}">${isToday(i)?'<span class="today">今天</span>':""}<span class="d">${d.date.slice(5).replace("-","/")}</span><span class="w">${d.w}・D${i+1}</span></button>`).join("");
+  $("#days").innerHTML = DAYS.map((d,i)=>`<button class="daytab" role="tab" aria-selected="${i===cur}" data-i="${i}">${isToday(i)?'<span class="today">今天</span>':""}<span class="d">${+d.date.slice(8)}</span><span class="w">${d.w}・D${i+1}</span></button>`).join("");
   document.querySelectorAll(".daytab").forEach(b=>b.onclick=()=>{const i=+b.dataset.i;if(i===cur)return;document.querySelectorAll(".daytab").forEach(x=>x.setAttribute("aria-selected",x===b));const go=()=>{cur=i;renderDays();renderDay()};window.dayTransition?dayTransition(i,go):go()});
 }
 function renderDay(){
@@ -567,5 +603,22 @@ const saved=store.get("busan.tab","plan");if(saved!=="plan")showTab(saved);
 })();
 </script>
 
+<script>
+(function(){
+  const fl=document.getElementById("flip"), fi=document.getElementById("flipInner"), front=fi.querySelector(".front"), back=fi.querySelector(".back");
+  function toggle(){
+    const on=!fi.classList.contains("flipped");
+    fi.classList.toggle("flipped",on); fi.classList.toggle("unflip",!on);
+    front.setAttribute("aria-hidden",on); back.setAttribute("aria-hidden",!on);
+    fl.setAttribute("aria-label",on?"翻回旅程資訊":"翻面看同行夥伴");
+  }
+  fl.addEventListener("click",e=>{
+    const b=e.target.closest(".buddy");
+    if(b&&fi.classList.contains("flipped")){b.classList.remove("wiggle");void b.offsetWidth;b.classList.add("wiggle");return}
+    toggle();
+  });
+  fl.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();toggle()}});
+})();
+</script>
 </body>
 </html>
