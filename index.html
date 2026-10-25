@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>草山釜山之旅</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: boarding-pass header + sticky section nav; itinerary as a tide-line timeline per day */
+:root{
+  --bg:#eef3f5; --surface:#ffffff; --ink:#14303d; --muted:#5b7380; --line:#d3e0e6;
+  --sea:#1d6f8f; --sea-soft:#dcedf3; --sun:#f0a14a; --sun-soft:#fdecd6;
+  --purple:#7a4fc4; --purple-soft:#ece4fa; --blue:#2f6fd6; --blue-soft:#e1ebfb; --warn:#c2512f; --warn-soft:#fbe5dd; --ok:#2f8a5c;
+  --display:"LXGW WenKai TC","Noto Sans TC",serif; --body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif; --mono:"DM Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0c1a21; --surface:#13252e; --ink:#e3eef2; --muted:#8fa8b3; --line:#244251;
+  --sea:#5fb6d6; --sea-soft:#173947; --sun:#f3b36a; --sun-soft:#3a2b19;
+  --purple:#b79af0; --purple-soft:#2c2142; --blue:#7fa9f0; --blue-soft:#1b2a45; --warn:#ef8d6c; --warn-soft:#3b2019; --ok:#6cc79a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c1a21; --surface:#13252e; --ink:#e3eef2; --muted:#8fa8b3; --line:#244251;
+  --sea:#5fb6d6; --sea-soft:#173947; --sun:#f3b36a; --sun-soft:#3a2b19;
+  --purple:#b79af0; --purple-soft:#2c2142; --blue:#7fa9f0; --blue-soft:#1b2a45; --warn:#ef8d6c; --warn-soft:#3b2019; --ok:#6cc79a; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.6}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:760px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 60px}
+a{color:var(--sea)}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* hero / boarding pass */
+.pass{background:var(--sea);color:#fff;border-radius:18px;overflow:hidden;position:relative}
+.pass-top{padding:20px 20px 16px;display:grid;gap:10px}
+.eyebrow{font-size:12px;letter-spacing:.12em;opacity:.8}
+.pass h1{font-size:clamp(30px,8vw,44px);line-height:1.1;font-weight:700}
+.route{display:flex;align-items:center;gap:12px;font-family:var(--mono)}
+.route b{font-size:26px;font-weight:500;letter-spacing:.04em}
+.route .plane{flex:1;border-top:2px dashed rgba(255,255,255,.5);position:relative;min-width:30px}
+.route .plane::after{content:"✈";position:absolute;top:-19px;left:calc(50% - 13px);font-size:26px;line-height:1.3}
+.route small{display:block;font-size:11px;opacity:.8;font-family:var(--body)}
+.pass-bottom{border-top:2px dashed rgba(255,255,255,.35);padding:14px 20px;display:flex;flex-wrap:wrap;gap:16px 28px;align-items:end;justify-content:space-between}
+.count{display:flex;align-items:baseline;gap:6px}
+.count .n{font-family:var(--mono);font-size:44px;line-height:1;font-weight:500}
+.kv{font-size:12px;opacity:.85}
+.kv b{display:block;font-family:var(--mono);font-size:15px;opacity:1}
+.wave{position:absolute;right:-20px;top:-10px;width:180px;opacity:.15;pointer-events:none}
+
+/* nav */
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);margin-top:18px;padding-block:8px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+nav button{flex:0 0 auto;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:500 14px var(--body);padding:8px 16px;border-radius:999px;cursor:pointer;transition:background .2s,color .2s}
+nav button[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+nav button:focus-visible,.chip:focus-visible,.daytab:focus-visible,.item:focus-visible,label:focus-within{outline:2px solid var(--sun);outline-offset:2px}
+section{margin-top:18px;display:grid;gap:14px}
+section[hidden]{display:none}
+
+/* day tabs */
+.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.daytab{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:8px 2px;cursor:pointer;color:var(--ink);display:grid;gap:0;text-align:center;font-family:var(--body);position:relative}
+.daytab .d{font-family:var(--mono);font-size:17px;font-weight:500}
+.daytab .w{font-size:11px;color:var(--muted)}
+.daytab[aria-selected="true"]{background:var(--sea);border-color:var(--sea);color:#fff}
+.daytab[aria-selected="true"] .w{color:#fff;opacity:.85}
+.daytab .today{position:absolute;top:-7px;left:50%;transform:translateX(-50%);background:var(--sun);color:#1d1205;font-size:10px;padding:0 6px;border-radius:6px;white-space:nowrap}
+
+.dayhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.dayhead h2{font-size:24px}
+.dayhead .stay{font-size:13px;color:var(--muted)}
+
+/* timeline */
+.timeline{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.item{display:grid;grid-template-columns:54px 22px minmax(0,1fr);cursor:pointer;border-radius:12px;outline:none}
+.item .t{font-family:var(--mono);font-size:14px;padding-top:12px;color:var(--muted);text-align:right;padding-right:6px}
+.rail{position:relative}
+.rail::before{content:"";position:absolute;left:10px;top:0;bottom:0;width:2px;background:var(--line)}
+.item:first-child .rail::before{top:18px}.item:last-child .rail::before{bottom:calc(100% - 18px)}
+.dot{position:absolute;left:4px;top:14px;width:14px;height:14px;border-radius:50%;background:var(--surface);border:2px solid var(--sea)}
+.item.meal .dot{border-color:var(--sun)}
+.item.past .dot{background:var(--line);border-color:var(--line)}
+.item.now .dot{background:var(--sun);border-color:var(--sun);box-shadow:0 0 0 6px var(--sun-soft);animation:pulse 2s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 10px transparent}}
+.card{margin:4px 0 8px;padding:10px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--line);transition:border-color .2s,transform .2s;min-width:0}
+.item:hover .card{border-color:var(--sea)}
+.item.past .card{opacity:.6}
+.item.now .card{border-color:var(--sun)}
+.card h3{font-family:var(--body);font-size:16px;font-weight:700;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;font-size:12px;color:var(--muted)}
+.tag{font-size:11px;padding:1px 8px;border-radius:999px;background:var(--sea-soft);color:var(--sea);font-weight:500;white-space:nowrap}
+.tag.meal{background:var(--sun-soft);color:var(--ink)}
+.tag.purple{background:var(--purple-soft);color:var(--purple)}
+.tag.blue{background:var(--blue-soft);color:var(--blue)}
+.tag.warn{background:var(--warn-soft);color:var(--warn)}
+.detail{display:grid;grid-template-rows:0fr;transition:grid-template-rows .25s ease}
+.item[aria-expanded="true"] .detail{grid-template-rows:1fr}
+.detail>div{overflow:hidden}
+.notes{margin:8px 0 0;padding:8px 0 0;border-top:1px dashed var(--line);display:grid;gap:4px;font-size:14px}
+.notes div{display:grid;grid-template-columns:72px minmax(0,1fr);gap:8px}
+.notes dt{color:var(--muted);font-size:12px;padding-top:2px}
+.notes dd{margin:0}
+.chev{margin-left:auto;color:var(--muted);transition:transform .25s;font-size:12px}
+.item[aria-expanded="true"] .chev{transform:rotate(180deg)}
+
+/* panels */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:10px;min-width:0}
+.panel h2{font-size:20px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px}
+.row{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.flight .code{font-family:var(--mono);font-size:22px;font-weight:500;color:var(--sea)}
+.small{font-size:13px;color:var(--muted)}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);text-decoration:none;font:500 13px var(--body);cursor:pointer}
+.btn:hover{border-color:var(--sea);color:var(--sea)}
+.btn.primary{background:var(--sea);border-color:var(--sea);color:#fff}
+
+/* pass window */
+.window{position:relative;height:36px;border-radius:8px;background:var(--bg);overflow:hidden;border:1px solid var(--line)}
+.window .fill{position:absolute;top:0;bottom:0;background:var(--purple-soft);border-left:2px solid var(--purple);border-right:2px solid var(--purple)}
+.window .lbl{position:absolute;top:8px;font-size:11px;font-family:var(--mono);color:var(--muted)}
+
+/* checklists */
+.progress{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.progress span{display:block;height:100%;background:var(--ok);transition:width .4s ease;width:0}
+.checks{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.checks label{display:flex;gap:10px;align-items:flex-start;padding:7px 6px;border-radius:8px;cursor:pointer}
+.checks label:hover{background:var(--bg)}
+.checks input{width:18px;height:18px;margin:2px 0 0;accent-color:var(--ok);flex:0 0 auto}
+.checks .txt{min-width:0}
+.checks input:checked+.txt{color:var(--muted);text-decoration:line-through}
+.checks .sub{display:block;font-size:12px;color:var(--muted);text-decoration:none}
+.deadline{font-size:12px;font-family:var(--mono);padding:1px 8px;border-radius:6px;background:var(--warn-soft);color:var(--warn);margin-left:4px;white-space:nowrap}
+.deadline.passed{background:var(--line);color:var(--muted)}
+.group-title{font-size:12px;letter-spacing:.08em;color:var(--muted);margin:8px 0 2px;font-weight:700}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:10px;font-size:13px;opacity:0;transition:.3s;pointer-events:none;z-index:20}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.note{font-size:12px;color:var(--muted)}
+@media (max-width:420px){.item{grid-template-columns:46px 20px minmax(0,1fr)}.daytab .d{font-size:15px}}
+/* ---- playful motion ---- */
+.wave{animation:drift 7s ease-in-out infinite}
+@keyframes drift{50%{transform:translateX(-24px) translateY(6px)}}
+.route .plane::after{animation:fly 4s ease-in-out infinite}
+@keyframes fly{0%{left:0;transform:rotate(-8deg)}50%{transform:translateY(-4px) rotate(4deg)}100%{left:calc(100% - 26px);transform:rotate(-8deg)}}
+.sea{position:absolute;left:0;right:0;bottom:0;height:16px;opacity:.22;pointer-events:none;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 16'%3E%3Cpath d='M0 8 Q10 0 20 8 T40 8 T60 8 T80 8 V16 H0Z' fill='%23fff'/%3E%3C/svg%3E") repeat-x 0 0/80px 16px;animation:sea 5s linear infinite}
+@keyframes sea{to{background-position:80px 0}}
+.count .n{display:inline-block;animation:pop .7s cubic-bezier(.3,1.6,.5,1) both}
+@keyframes pop{0%{transform:scale(.3);opacity:0}100%{transform:none;opacity:1}}
+section:not([hidden]){animation:rise .35s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}}
+.item.enter{animation:slideIn .4s cubic-bezier(.2,1.2,.4,1) both}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}}
+.card.boing{animation:boing .45s ease}
+@keyframes boing{30%{transform:scale(.97,1.03)}60%{transform:scale(1.02,.98)}}
+.daytab:active,.btn:active,nav button:active{transform:scale(.92)}
+.daytab,.btn,nav button{transition:transform .15s,background .2s,color .2s}
+.checks input:checked{animation:tick .35s cubic-bezier(.3,1.8,.5,1)}
+@keyframes tick{50%{transform:scale(1.4)}}
+.progress span.full{background:linear-gradient(90deg,var(--ok),var(--sea),var(--sun),var(--ok));background-size:300% 100%;animation:shine 2s linear infinite}
+@keyframes shine{to{background-position:300% 0}}
+.fx{position:fixed;left:0;top:0;pointer-events:none;z-index:30;font-size:18px;will-change:transform}
+
+
+/* ---- inline day scene ---- */
+.scene{position:relative;width:100%;aspect-ratio:420/150;max-width:100%;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:var(--sea-soft)}
+.scene svg{width:100%;height:100%;display:block;animation:scenein .45s cubic-bezier(.3,1.4,.5,1)}
+@keyframes scenein{from{opacity:0;transform:scale(1.06)}}
+.scene .chip{position:absolute;left:10px;top:10px;background:var(--surface);color:var(--ink);border:1px solid var(--line);font-size:12px;font-weight:500;padding:3px 10px;border-radius:999px;animation:chipin .5s .1s cubic-bezier(.3,1.6,.5,1) both}
+@keyframes chipin{from{opacity:0;transform:translateY(-8px)}}
+.scene .sk{fill:var(--sea-soft)} .scene .sk2{fill:var(--sun-soft)} .scene .sea1{fill:var(--sea);opacity:.45} .scene .sea2{fill:var(--sea)}
+.scene .acc{fill:var(--sea)} .scene .sunc{fill:var(--sun)} .scene .hill{fill:var(--ok);fill-opacity:.35} .scene .tree{fill:var(--ok);fill-opacity:.75}
+.scene .gr{fill:var(--line)} .scene .ink{fill:var(--ink)} .scene .strk{stroke:var(--ink);fill:none;stroke-width:1.6;stroke-linecap:round}
+.scene .bld{fill:var(--surface);stroke:var(--line);stroke-width:1.5} .scene .cable{stroke:var(--ink);stroke-width:1.5;opacity:.6}
+.scene .trk{stroke:var(--sun);stroke-width:4;stroke-linecap:round} .scene .speed{stroke:var(--muted);stroke-width:2;stroke-linecap:round;fill:none}
+.scene .steam{stroke:var(--muted);fill:none;stroke-width:3;stroke-linecap:round}
+.s-wave{animation:swave 1s linear infinite}@keyframes swave{to{transform:translateX(40px)}}
+.s-drift{animation:sdrift 9s linear infinite}@keyframes sdrift{to{transform:translateX(-240px)}}
+.s-takeoff{animation:takeoff 2.6s cubic-bezier(.55,0,.75,.6) infinite}
+@keyframes takeoff{0%{transform:translate(-120px,117px) rotate(0)}40%{transform:translate(40px,115px) rotate(-6deg)}100%{transform:translate(370px,0) rotate(-20deg)}}
+.s-boat{animation:boat 1.4s ease-in-out infinite}
+@keyframes boat{0%,100%{transform:translate(110px,104px) rotate(-4deg)}50%{transform:translate(118px,100px) rotate(4deg)}}
+.s-luge{animation:luge 2s cubic-bezier(.5,0,.8,.6) infinite}
+@keyframes luge{from{transform:translate(-130px,-3px) rotate(18.4deg)}to{transform:translate(370px,163px) rotate(18.4deg)}}
+.spin{animation:spin .3s linear infinite;transform-box:fill-box;transform-origin:center}@keyframes spin{to{transform:rotate(360deg)}}
+.s-head{animation:headbob 1.1s ease-in-out infinite}@keyframes headbob{50%{transform:translateY(-3px)}}
+.s-steam{opacity:0;animation:steam 1.4s ease-out infinite}@keyframes steam{0%{transform:translateY(0);opacity:0}30%{opacity:.8}100%{transform:translateY(-28px);opacity:0}}
+.s-bub{animation:bub 1s ease-in infinite;transform-box:fill-box;transform-origin:center}@keyframes bub{0%{transform:translateY(0) scale(.4);opacity:0}40%{opacity:1}100%{transform:translateY(-14px) scale(1);opacity:0}}
+.s-gond{animation:gond 4s linear infinite}
+@keyframes gond{0%{transform:translate(-110px,57px) rotate(-5deg)}25%{transform:translate(5px,45.5px) rotate(5deg)}50%{transform:translate(120px,34px) rotate(-5deg)}75%{transform:translate(235px,22.5px) rotate(5deg)}100%{transform:translate(350px,11px) rotate(-3deg)}}
+.s-roll{animation:roll 3s cubic-bezier(.3,.7,.4,1) infinite}
+@keyframes roll{0%{transform:translate(-120px,129px)}50%{transform:translate(110px,129px)}60%{transform:translate(110px,119px)}70%,100%{transform:translate(110px,129px)}}
+.s-hop{animation:hop .7s ease-in-out infinite}@keyframes hop{50%{transform:translateY(-10px)}}
+.s-cruise{animation:cruise 1.4s ease-in-out infinite}
+@keyframes cruise{0%,100%{transform:translate(132px,76px) rotate(-3deg)}50%{transform:translate(132px,70px) rotate(2deg)}}
+.s-heart{opacity:0;animation:heart 1.4s ease-out infinite}
+@keyframes heart{0%{transform:translate(96px,76px) scale(.3);opacity:0}20%{opacity:1}100%{transform:translate(20px,44px) scale(1.1);opacity:0}}
+.s-gull{animation:gull 7s linear infinite}@keyframes gull{from{transform:translateX(-150px)}to{transform:translateX(330px)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="pass">
+    <svg class="wave" viewBox="0 0 200 120" aria-hidden="true"><path d="M0 60 Q25 30 50 60 T100 60 T150 60 T200 60" fill="none" stroke="#fff" stroke-width="6"/><path d="M0 90 Q25 60 50 90 T100 90 T150 90 T200 90" fill="none" stroke="#fff" stroke-width="6"/></svg>
+    <div class="pass-top">
+      <div class="eyebrow">BUSAN · 2026.11.14 — 11.20 · 6 晚 7 天</div>
+      <h1>草山釜山之旅</h1>
+      <div class="route">
+        <div><b>TPE</b><small>桃園</small></div>
+        <div class="plane"></div>
+        <div><b>PUS</b><small>金海</small></div>
+      </div>
+    </div>
+    <div class="pass-bottom">
+      <div class="count"><span class="n" id="countN">—</span><span id="countU">天後出發</span></div>
+      <div class="kv">去程<b>CI186 · 11/14 15:40</b></div>
+      <div class="kv">回程<b>CI189 · 11/20 11:50</b></div>
+    </div>
+    <div class="sea" aria-hidden="true"></div>
+  </header>
+
+  <nav role="tablist" aria-label="分頁">
+    <button role="tab" data-tab="plan" aria-selected="true">每日行程</button>
+    <button role="tab" data-tab="info" aria-selected="false">航班住宿</button>
+    <button role="tab" data-tab="pass" aria-selected="false">釜山 Pass</button>
+    <button role="tab" data-tab="todo" aria-selected="false">行前事項</button>
+    <button role="tab" data-tab="pack" aria-selected="false">行李清單</button>
+  </nav>
+
+  <section id="plan">
+    <div class="days" role="tablist" aria-label="日期" id="days"></div>
+    <div class="scene" id="scene" aria-hidden="true"></div>
+    <div class="dayhead"><h2 id="dayTitle"></h2><span class="stay" id="dayStay"></span></div>
+    <ol class="timeline" id="timeline"></ol>
+    <div class="btns">
+      <a class="btn" href="https://maps.app.goo.gl/Toy1oswSS6UdkqDu6?g_st=i" target="_blank" rel="noopener">📍 Google 地圖清單</a>
+      <a class="btn" href="https://drive.google.com/file/d/1Fzd_XsnkpthvNTynHvMNyTKg6XLlrwya/view?usp=drive_link" target="_blank" rel="noopener">📄 行程表 PDF</a>
+    </div>
+    <p class="note">點任一行程可展開交通與備註。紫色／藍色標籤代表使用釜山 Pass 的入場。</p>
+  </section>
+
+  <section id="info" hidden>
+    <div class="panel flight">
+      <div class="row"><h2>中華航空</h2><span class="small">總金額 <span class="mono">NT$11,083</span></span></div>
+      <div class="row"><span class="code">CI186</span><span class="mono">11/14（六） 15:40 桃園 → 18:50 金海</span></div>
+      <div class="row"><span class="code">CI189</span><span class="mono">11/20（五） 11:50 金海 → 13:30 桃園</span></div>
+      <div class="row small"><span>線上報到 11/12（四）15:40 開放</span><a href="https://airportservice.china-airlines.com/eCheckin/eCheckin_home?country=tw&locale=zh" target="_blank" rel="noopener">華航網路報到 →</a></div>
+    </div>
+    <div class="grid2">
+      <div class="panel">
+        <span class="tag" style="justify-self:start">5 晚 · 11/14 – 11/19</span>
+        <h2>UH suite 海雲台飯店</h2>
+        <p class="small" style="margin:0">271 Haeundaehaebyeon-ro, Haeundae-gu, Busan</p>
+        <p class="small" style="margin:0">15:00 後入住・11:00 前退房</p>
+        <div class="btns"><a class="btn" href="https://maps.app.goo.gl/GFKQJDqM8qkpFdhj7" target="_blank" rel="noopener">地圖</a><button class="btn copy" data-copy="271 Haeundaehaebyeon-ro, Haeundae-gu, Busan">複製地址</button></div>
+      </div>
+      <div class="panel">
+        <span class="tag" style="justify-self:start">1 晚 · 11/19 – 11/20</span>
+        <h2>Urbanstay Seomyeon 酒店</h2>
+        <p class="small" style="margin:0">Busan, Busanjin District, Jungang-daero, 752 트루엘센트럴</p>
+        <p class="small" style="margin:0">15:00 後入住・11:00 前退房</p>
+        <div class="btns"><a class="btn" href="https://maps.app.goo.gl/gbpeZtrw1sq5ohe77" target="_blank" rel="noopener">地圖</a><button class="btn copy" data-copy="Busan, Busanjin District, Jungang-daero, 752 트루엘센트럴">複製地址</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pass" hidden>
+    <div class="panel">
+      <div class="row"><h2>釜山 Pass 48H</h2><span class="mono">NT$1,705</span></div>
+      <p class="small" style="margin:0">使用時段 11/15 16:00 – 11/17 15:59</p>
+      <div class="window" aria-hidden="true">
+        <div class="fill" style="left:calc(100%*16/72);right:calc(100%*8/72)"></div>
+        <span class="lbl" style="left:6px">11/15</span><span class="lbl" style="left:34%">11/16</span><span class="lbl" style="left:67%">11/17</span>
+      </div>
+      <div id="passStatus" class="small"></div>
+      <a class="btn" style="justify-self:start" href="https://www.klook.com/zh-TW/activity/81576-visit-busan-pass/" target="_blank" rel="noopener">Klook 購買</a>
+    </div>
+    <div class="panel"><h2>入場項目</h2><div id="passList"></div></div>
+  </section>
+
+  <section id="todo" hidden>
+    <div class="panel">
+      <div class="row"><h2>行前事項</h2><span class="mono small" id="todoCount"></span></div>
+      <div class="progress"><span id="todoBar"></span></div>
+      <ul class="checks" id="todoList"></ul>
+    </div>
+  </section>
+
+  <section id="pack" hidden>
+    <div class="panel">
+      <div class="row"><h2>行李清單</h2><span class="mono small" id="packCount"></span></div>
+      <div class="progress"><span id="packBar"></span></div>
+      <div id="packList"></div>
+      <div class="btns"><button class="btn" id="packReset">清除勾選</button></div>
+      <p class="note">勾選只會存在你自己的手機，每位旅伴各自打勾。</p>
+    </div>
+  </section>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const M = u => u; // map link passthrough
+const DAYS = [
+ {date:"2026-11-14",w:"六",title:"第一天・出發",stay:"住 UH suite 海雲台",items:[
+  {t:"12:00",n:"桃園機場",tr:"機場捷運",notes:[["午餐","機場解決"],["託運","13:40"],["航廈","第一航廈"]]},
+  {t:"18:50",n:"抵達金海機場",tr:"中華航空 CI186",notes:[["晚餐","飛機餐"],["飛行","15:40 – 18:50"],["轉乘","金海機場輕軌站"]]},
+  {t:"21:30",n:"UH suite 海雲台飯店",tr:"機場輕軌 + 地鐵",notes:[["輕軌","金海機場 → 沙上站"],["地鐵","沙上站 → 海雲台站"],["行程","放置行李"]]},
+  {t:"22:00",n:"Woongjang Sanghoe",meal:"宵夜",tr:"步行",link:"https://maps.app.goo.gl/9w2B1eGoyS6kbaCo8",notes:[["營業","11:00 – 03:00"]]},
+  {t:"23:00",n:"回飯店",tr:"步行",notes:[["行程","洗漱就寢"]]}]},
+ {date:"2026-11-15",w:"日",title:"第二天・遊艇與烤肉",stay:"住 UH suite 海雲台",items:[
+  {t:"11:00",n:"워킹홀리데이 해운대 早午餐",meal:"早餐",tr:"步行",link:"https://maps.app.goo.gl/fqVgJv3J95e3yFgo6",notes:[["營業","08:00 – 21:30"]]},
+  {t:"16:30",n:"鑽石灣遊艇碼頭",tr:"公車（約 1.5 小時）",pass:"purple",notes:[["入場","釜山 Pass（紫）"]]},
+  {t:"17:30",n:"Sogeumbok 鹽福烤肉",meal:"晚餐",tr:"步行",link:"https://maps.app.goo.gl/bnu73Ff931z4iKw46",notes:[["營業","17:00 – 22:00"]]},
+  {t:"",n:"看夜景",notes:[]},
+  {t:"22:00",n:"回飯店",tr:"公車",notes:[["行程","洗漱就寢"]]}]},
+ {date:"2026-11-16",w:"一",title:"第三天・海雲台一日",stay:"住 UH suite 海雲台",items:[
+  {t:"12:00",n:"아라산장 阿拉山莊",meal:"午餐",tr:"步行",notes:[["行程","吃午餐看海景"]]},
+  {t:"15:00",n:"Skyline Luge Busan",tr:"步行",pass:"purple",notes:[["入場","釜山 Pass（紫）"],["提醒","免預約、直接排隊，可連玩兩趟"]]},
+  {t:"17:30",n:"藍線公園 海岸列車",tr:"海岸列車",pass:"blue",notes:[["入場","釜山 Pass（藍）"],["路線","松亭站 → 尾浦站"]]},
+  {t:"18:00",n:"Busan X the SKY 觀景台",tr:"步行",pass:"purple",notes:[["入場","釜山 Pass（紫）"],["提醒","黃昏前入場，可待到日落"]]},
+  {t:"20:00",n:"水邊最高豬肉湯飯",meal:"晚餐",tr:"步行",link:"https://maps.app.goo.gl/GFy9YgHKYbv2hnAX9",notes:[["營業","24 小時"]]},
+  {t:"23:00",n:"回飯店",tr:"公車",notes:[["行程","洗漱就寢"]]}]},
+ {date:"2026-11-17",w:"二",title:"第四天・汗蒸與夜景",stay:"住 UH suite 海雲台",items:[
+  {t:"10:30",n:"新世界 SPA LAND",tr:"地鐵",pass:"purple",link:"https://deeppositive.com.tw/spa-land/",linkText:"Spa Land 攻略",notes:[["入場","釜山 Pass（紫）・Pass 到 15:59 止"],["停留","約 4 小時"]]},
+  {t:"14:30",n:"新世界百貨 Centum City",meal:"午餐",tr:"步行",notes:[["行程","美食街吃午餐、逛街"]]},
+  {t:"18:00",n:"The Bay 101",meal:"晚餐",tr:"公車",notes:[["行程","看夜景吃晚餐"]]},
+  {t:"23:00",n:"回飯店",tr:"公車",notes:[["行程","洗漱就寢"]]}]},
+ {date:"2026-11-18",w:"三",title:"第五天・松島與南浦洞",stay:"住 UH suite 海雲台",items:[
+  {t:"10:00",n:"松島海上纜車",tr:"地鐵",pass:"blue",notes:[["入場","已購票（藍色項目）"]]},
+  {t:"11:00",n:"松島天空步道／龍宮空中步道",tr:"步行",notes:[["行程","走走拍照"]]},
+  {t:"12:30",n:"최고밀양돼지국밥",meal:"午餐",tr:"公車",link:"https://maps.app.goo.gl/8eVMYh1KBDUHdpTY6",notes:[["營業","24 小時"]]},
+  {t:"13:30",n:"Songdo Beach",tr:"步行",notes:[["行程","走走拍照"]]},
+  {t:"14:30",n:"甘川文化村",tr:"計程車",notes:[["行程","走走拍照"]]},
+  {t:"15:30",n:"光復路時尚街 + BIFF 廣場",tr:"公車",notes:[["行程","走走拍照"]]},
+  {t:"17:00",n:"富平罐頭市場",meal:"晚餐",tr:"步行",notes:[["小吃","螺絲飯捲、生魚片、油飯"]]},
+  {t:"21:00",n:"回飯店",tr:"地鐵",notes:[["行程","洗漱就寢"]]}]},
+ {date:"2026-11-19",w:"四",title:"第六天・移動到西面",stay:"住 Urbanstay 西面",items:[
+  {t:"11:00",n:"退房・自由活動",notes:[["行程","西面逛街、咖啡廳，或休息、補景點"]]},
+  {t:"15:00",n:"Urbanstay Seomyeon 酒店",tr:"計程車",notes:[["行程","入住報到、寄放行李"]]},
+  {t:"18:00",n:"山莊 1988 西面本店",meal:"晚餐",tr:"步行",link:"https://maps.app.goo.gl/FQpLYWEM1zNn6jPb8",notes:[["營業","16:30 – 01:00"],["行程","吃晚餐、附近逛逛"]]},
+  {t:"21:00",n:"回飯店",tr:"步行",notes:[["行程","洗漱就寢"]]}]},
+ {date:"2026-11-20",w:"五",title:"第七天・回家",stay:"",items:[
+  {t:"10:00",n:"金海機場",tr:"計程車",notes:[["託運","09:50"],["航廈","第一航廈"]]},
+  {t:"11:50",n:"CI189 起飛",tr:"中華航空",notes:[["午餐","飛機餐"],["飛行","11:50 – 13:30"]]},
+  {t:"13:30",n:"抵達桃園機場",notes:[]}]}
+];
+const PASS = [
+ {c:"purple",n:"鑽石灣遊艇",p:"日間 $694／傍晚 $1066（需預約）",d:1,ok:true},
+ {c:"purple",n:"Skyline Luge",p:"$661",d:2,ok:true},
+ {c:"purple",n:"X the Sky 觀景台",p:"$491",d:2,ok:true},
+ {c:"purple",n:"Centum City SpaLand",p:"$424",d:3,ok:true},
+ {c:"purple",n:"釜山樂天世界",p:"$713",ok:false},
+ {c:"blue",n:"海岸列車（單程）",p:"$212",d:2,ok:true},
+ {c:"blue",n:"松島海上纜車",p:"$402",d:4,ok:true},
+ {c:"",n:"Sea Life 釜山水族館",p:"$422",ok:false},
+ {c:"",n:"天空膠囊列車",p:"預約 $996（₩12,500/人）",ok:false}
+];
+const TODO = [
+ {id:"t1",n:"訂機票",def:true},{id:"t2",n:"訂飯店",def:true},
+ {id:"t3",n:"換韓元現金"},{id:"t4",n:"旅平險"},{id:"t5",n:"行李／行程"},{id:"t6",n:"網卡／eSIM"},
+ {id:"t7",n:"預約膠囊列車／海岸列車",dl:"2026-10-13T06:00",dlt:"10/13 06:00 開放",link:"https://www.bluelinepark.com/chn/booking.do"},
+ {id:"t8",n:"預約鑽石灣遊艇碼頭",dl:"2026-10-16T00:00",dlt:"10/16 00:00 開放",link:"https://diamondbay.co.kr/en/visit-busan-pass/"},
+ {id:"t9",n:"華航選座位／網路報到",dl:"2026-11-12T15:40",dlt:"11/12 15:40 開放",link:"https://airportservice.china-airlines.com/eCheckin/eCheckin_home?country=tw&locale=zh"},
+ {id:"t10",n:"購買釜山 Pass／門票",sub:"使用 11/15 16:00 – 11/17 15:59",link:"https://www.klook.com/zh-TW/activity/81576-visit-busan-pass/"}
+];
+const PACK = {
+ "隨身・重要物品":["護照","網卡／eSIM","家鑰匙","錢包（台幣／韓元／信用卡／金融卡／WOWPASS）","身分證／健保卡","夾鏈袋（隨身液體用）"],
+ "隨身・備用藥品":["暈機藥","胃藥","感冒藥（或普拿疼）","人工淚液"],
+ "隨身・女性用品":["梳子","髮圈","髮捲","化妝包","衛生棉"],
+ "隨身・電子產品":["行動電源","充電線（Type-C／Lightning）","藍芽耳機","小電風扇","萬用轉接頭"],
+ "隨身・其他":["衛生紙","濕紙巾","杯套","雨傘","防曬乳","眼鏡／隱眼"],
+ "託運・衣服":["內衣／內褲","短袖","短褲／長褲","薄外套","襪子"],
+ "託運・盥洗用品":["牙刷牙膏（備用）","牙線","小毛巾（備用）","洗面乳／卸妝紙巾","洗臉巾","盥洗旅行組"],
+ "託運・保養":["化妝水","精華保濕液","保濕乳"],
+ "託運・其他":["垃圾袋（裝髒衣服）"]
+};
+
+const store = {get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const toast = m => {const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("show"),1600)};
+// Busan / Taipei times: treat dates as Korea time (UTC+9)
+const kst = s => new Date(s+"+09:00");
+const now = () => new Date();
+const todayKST = () => new Date(now().getTime()+9*3600e3).toISOString().slice(0,10);
+
+// countdown
+(function(){
+  const dep = new Date("2026-11-14T15:40:00+08:00"), ret = new Date("2026-11-20T13:30:00+08:00");
+  const n = now(), N=$("#countN"), U=$("#countU");
+  if(n<dep){const d=Math.ceil((dep-n)/864e5);N.textContent=d;U.textContent=d===1?"明天出發！":"天後出發"}
+  else if(n<ret){const i=DAYS.findIndex(d=>d.date===todayKST());N.textContent="D"+(i+1);U.textContent="旅行進行中"}
+  else{N.textContent="✓";U.textContent="旅程結束，辛苦了"}
+})();
+
+// tabs
+const tabs=[...document.querySelectorAll("nav button")];
+function showTab(id){tabs.forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===id));document.querySelectorAll("section").forEach(s=>s.hidden=s.id!==id);store.set("busan.tab",id)}
+tabs.forEach(b=>b.addEventListener("click",()=>showTab(b.dataset.tab)));
+
+// days
+let cur = Math.max(0,DAYS.findIndex(d=>d.date===todayKST()));
+const isToday = i => DAYS[i].date===todayKST();
+function renderDays(){
+  $("#days").innerHTML = DAYS.map((d,i)=>`<button class="daytab" role="tab" aria-selected="${i===cur}" data-i="${i}">${isToday(i)?'<span class="today">今天</span>':""}<span class="d">${d.date.slice(5).replace("-","/")}</span><span class="w">${d.w}・D${i+1}</span></button>`).join("");
+  document.querySelectorAll(".daytab").forEach(b=>b.onclick=()=>{const i=+b.dataset.i;if(i===cur)return;document.querySelectorAll(".daytab").forEach(x=>x.setAttribute("aria-selected",x===b));const go=()=>{cur=i;renderDays();renderDay()};window.dayTransition?dayTransition(i,go):go()});
+}
+function renderDay(){
+  const d=DAYS[cur];
+  $("#dayTitle").textContent=d.title; $("#dayStay").textContent=d.stay;
+  let nowIdx=-1;
+  if(isToday(cur)){const hm=new Date(now().getTime()+9*3600e3).toISOString().slice(11,16);d.items.forEach((it,i)=>{if(it.t&&it.t<=hm)nowIdx=i})}
+  $("#timeline").innerHTML=d.items.map((it,i)=>{
+    const cls=["item",it.meal?"meal":"",nowIdx>=0&&i<nowIdx?"past":"",i===nowIdx?"now":""].join(" ");
+    const tags=[it.meal?`<span class="tag meal">${it.meal}</span>`:"",it.pass?`<span class="tag ${it.pass}">Pass ${it.pass==="purple"?"紫":"藍"}</span>`:"",it.warn?`<span class="tag warn">⚠ 待確認</span>`:"",i===nowIdx?`<span class="tag" style="background:var(--sun);color:#1d1205">進行中</span>`:""].join("");
+    const notes=[it.tr?["交通",it.tr]:null,...it.notes,it.warn?["注意",it.warn]:null].filter(Boolean);
+    const link=it.link?`<div><dt>連結</dt><dd><a href="${it.link}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${it.linkText||"開啟 Google 地圖"} →</a></dd></div>`:"";
+    return `<li class="${cls}" tabindex="0" role="button" aria-expanded="false">
+      <span class="t">${it.t||"—"}</span><span class="rail"><span class="dot"></span></span>
+      <div class="card"><h3>${esc(it.n)} ${tags}<span class="chev">▼</span></h3>
+        ${it.tr?`<div class="meta"><span>${esc(it.tr)}</span></div>`:""}
+        <div class="detail"><div><dl class="notes">${notes.map(([k,v])=>`<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("")}${link}</dl></div></div>
+      </div></li>`}).join("");
+  document.querySelectorAll(".item").forEach(li=>{
+    const tog=()=>li.setAttribute("aria-expanded",li.getAttribute("aria-expanded")!=="true");
+    li.addEventListener("click",tog);li.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();tog()}});
+  });
+}
+
+// pass
+(function(){
+  const s=kst("2026-11-15T16:00"), e=kst("2026-11-17T15:59"), n=now();
+  $("#passStatus").innerHTML = n<s?`距離 Pass 啟用還有 <b class="mono">${Math.ceil((s-n)/864e5)}</b> 天`: n<=e?`<b style="color:var(--ok)">Pass 使用中</b>，剩 <b class="mono">${Math.floor((e-n)/36e5)}</b> 小時`:"Pass 已到期";
+  $("#passList").innerHTML = `<ul class="checks">`+PASS.map(p=>`<li><label style="cursor:default"><span class="tag ${p.c||""}" style="${p.c?"":"background:var(--bg);color:var(--muted)"};min-width:42px;text-align:center">${p.c==="purple"?"紫":p.c==="blue"?"藍":"其他"}</span><span class="txt">${p.n}<span class="sub">${p.p}${p.d!=null?` ・ 第 ${p.d+1} 天（${DAYS[p.d].date.slice(5).replace("-","/")}）`:""}</span></span><span style="margin-left:auto;font-size:12px;color:${p.ok?"var(--ok)":"var(--muted)"};white-space:nowrap">${p.ok?"✓ 已列入":"未列入"}</span></label></li>`).join("")+`</ul>`;
+})();
+
+// checklists
+function checklist(listEl,items,key,countEl,barEl){
+  const st=store.get(key,{});
+  const render=()=>{
+    let done=0;items.forEach(it=>{if(st[it.id]??it.def)done++});
+    countEl.textContent=`${done} / ${items.length}`;barEl.style.width=(done/items.length*100)+"%";
+  };
+  listEl.querySelectorAll("input").forEach(inp=>{
+    const it=items.find(x=>x.id===inp.id);inp.checked=!!(st[it.id]??it.def);
+    inp.addEventListener("change",()=>{st[it.id]=inp.checked;store.set(key,st);render();
+      const done=items.every(x=>st[x.id]??x.def);if(done)toast("全部完成 🎉");});
+  });
+  render();
+  return ()=>{items.forEach(it=>{st[it.id]=!!it.def});store.set(key,st);listEl.querySelectorAll("input").forEach(i=>i.checked=!!items.find(x=>x.id===i.id).def);render()};
+}
+$("#todoList").innerHTML=TODO.map(t=>{
+  let dl="";if(t.dl){const passed=now()>new Date(t.dl+"+08:00");dl=`<span class="deadline ${passed?"passed":""}">${passed?"已開放":t.dlt}</span>`}
+  return `<li><label><input type="checkbox" id="${t.id}"><span class="txt">${t.n}${dl}${t.sub?`<span class="sub">${t.sub}</span>`:""}${t.link?`<a class="sub" href="${t.link}" target="_blank" rel="noopener">前往官網 →</a>`:""}</span></label></li>`}).join("");
+checklist($("#todoList"),TODO,"busan.todo",$("#todoCount"),$("#todoBar"));
+
+const packItems=[];let html="";let k=0;
+for(const [g,arr] of Object.entries(PACK)){html+=`<div class="group-title">${g}</div><ul class="checks">`;arr.forEach(n=>{const id="p"+(k++);packItems.push({id,n});html+=`<li><label><input type="checkbox" id="${id}"><span class="txt">${n}</span></label></li>`});html+="</ul>"}
+$("#packList").innerHTML=html;
+const resetPack=checklist($("#packList"),packItems,"busan.pack",$("#packCount"),$("#packBar"));
+$("#packReset").onclick=()=>{resetPack();toast("已清除勾選")};
+
+// copy
+document.querySelectorAll(".copy").forEach(b=>b.addEventListener("click",()=>{
+  const txt=b.dataset.copy;
+  navigator.clipboard?.writeText(txt).then(()=>toast("地址已複製")).catch(()=>toast(txt));
+}));
+
+renderDays();renderDay();
+const saved=store.get("busan.tab","plan");if(saved!=="plan")showTab(saved);
+</script>
+
+<script>
+(function(){
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function confetti(){
+    if(reduce) return;
+    const cs=getComputedStyle(document.documentElement), cols=["--sea","--sun","--purple","--blue","--ok"].map(v=>cs.getPropertyValue(v));
+    for(let i=0;i<46;i++){
+      const s=document.createElement("span"); s.className="fx";
+      s.style.cssText=`width:8px;height:12px;border-radius:2px;background:${cols[i%cols.length]}`;
+      document.body.appendChild(s);
+      const x=Math.random()*innerWidth, dx=Math.random()*120-60;
+      s.animate([{transform:`translate(${x}px,-20px) rotate(0)`},{transform:`translate(${x+dx}px,${innerHeight+20}px) rotate(${Math.random()*720}deg)`}],
+        {duration:1800+Math.random()*1400,delay:Math.random()*400,easing:"cubic-bezier(.3,.4,.6,1)"}).onfinish=()=>s.remove();
+    }
+  }
+  function stagger(){ document.querySelectorAll("#timeline .item").forEach((li,i)=>{li.classList.remove("enter");void li.offsetWidth;li.style.animationDelay=(i*60)+"ms";li.classList.add("enter")}); }
+  const _rd = renderDay;
+  renderDay = function(){ _rd(); stagger(); };
+  stagger();
+  document.getElementById("timeline").addEventListener("click",e=>{
+    const c=e.target.closest(".item")?.querySelector(".card"); if(!c) return;
+    c.classList.remove("boing"); void c.offsetWidth; c.classList.add("boing");
+  });
+  const lists=[["todoList","todoBar"],["packList","packBar"]];
+  function checkFull(l,b){const ins=[...document.querySelectorAll(`#${l} input`)],done=ins.filter(i=>i.checked).length;document.getElementById(b).classList.toggle("full",done===ins.length);return done===ins.length}
+  const was={}; lists.forEach(([l,b])=>was[l]=checkFull(l,b));
+  document.addEventListener("change",e=>{
+    const entry=lists.find(([l])=>e.target.closest&&e.target.closest("#"+l)); if(!entry) return;
+    const full=checkFull(...entry); if(full&&!was[entry[0]]) confetti(); was[entry[0]]=full;
+  });
+  document.getElementById("packReset").addEventListener("click",()=>{was.packList=checkFull("packList","packBar")});
+})();
+</script>
+<script>
+(function(){
+  const BG=c=>`<rect class="${c}" x="-90" width="420" height="150"/>`;
+  const cloud=(x,y)=>`<g fill="#fff" opacity=".85"><ellipse cx="${x}" cy="${y}" rx="18" ry="7"/><ellipse cx="${x-8}" cy="${y-4}" rx="10" ry="7"/><ellipse cx="${x+6}" cy="${y-6}" rx="10" ry="8"/></g>`;
+  const clouds=pts=>`<g class="s-drift">${[0,240,480].map(o=>pts.map(([x,y])=>cloud(x+o-90,y)).join("")).join("")}</g>`;
+  const wave=(y,cls,dur)=>{let d=`M-160 ${y}`;for(let x=-160;x<400;x+=40)d+=" q10 -6 20 0 t20 0";return `<g class="s-wave" style="animation-duration:${dur}s"><path class="${cls}" d="${d} V150 H-160Z"/></g>`};
+  const PLANE=`<path d="M-34 -1 Q-34 -8 -24 -8 H22 Q36 -8 38 0 Q36 7 22 7 H-24 Q-34 7 -34 -1Z" fill="#fff" stroke="#b8c7cf" stroke-width="1.2"/><path d="M-31 -7 L-38 -24 L-27 -24 L-17 -7Z" class="acc"/><path d="M-36 -2 L-45 -6 L-43 2Z" fill="#b8c7cf"/><path d="M-6 2 L-20 22 L-9 22 L14 2Z" fill="#b8c7cf"/>${[-14,-6,2,10,18].map(x=>`<circle cx="${x}" cy="-3" r="1.9" class="acc"/>`).join("")}<path d="M29 -5 Q35 -4 36 -1 L29 -1Z" fill="#14303d" opacity=".55"/>`;
+  const HEART=`<path transform="scale(1.6)" d="M0 3 C-6 -2 -6 -7 -2.5 -7 C-1 -7 0 -6 0 -5 C0 -6 1 -7 2.5 -7 C6 -7 6 -2 0 3Z" fill="#ef7b9a"/>`;
+  const steam=(x,y,d)=>`<g transform="translate(${x},${y})"><path class="steam s-steam" style="animation-delay:${d}s" d="M0 0 q-6 -8 0 -16 t0 -16"/></g>`;
+  const BAG=c=>`<path d="M-6 -22 Q-6 -30 0 -30 Q6 -30 6 -22" stroke="#14303d" stroke-width="1.8" fill="none"/><path d="M-10 -22 H10 L12 0 H-12Z" fill="${c}"/>`;
+  const S=[
+  `${BG("sk")}${clouds([[40,30],[130,20],[200,48]])}
+   <rect class="gr" x="-90" y="126" width="420" height="24"/>${[-2,-1,0,1,2,3,4,5,6,7].map(i=>`<rect x="${i*42+6}" y="136" width="22" height="3" rx="1.5" fill="#fff"/>`).join("")}
+   <g class="s-takeoff">${PLANE}</g>`,
+  `${BG("sk2")}<circle class="sunc" cx="200" cy="64" r="18"/>
+   <g class="s-gull"><path class="strk" d="M30 40 q5 -5 10 0 q5 -5 10 0 M58 28 q4 -4 8 0 q4 -4 8 0"/></g>
+   ${wave(98,"sea1",1.6)}
+   <g class="s-boat"><path d="M-38 -2 H38 L28 12 H-28Z" fill="#fff" stroke="#b8c7cf" stroke-width="1.2"/><rect x="-30" y="2" width="56" height="2.5" class="acc"/><rect x="-1" y="-50" width="2" height="48" class="ink"/><path d="M2 -48 L2 -6 L32 -6Z" fill="#fff" stroke="#b8c7cf" stroke-width="1.2"/><path d="M-2 -42 L-2 -6 L-26 -6Z" class="sunc"/><path d="M1 -50 l10 3 l-10 3z" fill="#c2512f"/></g>
+   ${wave(110,"sea2",1)}`,
+  `${BG("sk")}<circle class="sunc" cx="270" cy="30" r="12"/>
+   <path class="hill" d="M-90 10 L330 150 H-90Z"/>
+   ${[[-60,70],[-10,96],[30,92],[70,112],[124,134],[20,130],[-70,120]].map(([x,y])=>`<path class="tree" d="M${x} ${y} l9 -20 l9 20z"/>`).join("")}
+   <line class="trk" x1="-90" y1="10" x2="330" y2="150"/>
+   <g class="s-luge"><path class="speed" d="M-24 -6 h-16 M-26 -12 h-12 M-24 0 h-20"/><rect x="-16" y="-12" width="32" height="10" rx="4" fill="#f0a14a"/><rect x="-16" y="-20" width="6" height="10" rx="2" fill="#f0a14a"/><circle cx="-2" cy="-20" r="7" fill="#c2512f"/><path d="M1 -23 h6 a4 4 0 0 1 -1 6 h-5z" fill="#14303d" opacity=".75"/><g class="spin"><circle cx="-10" cy="-2" r="4" fill="#14303d"/><path d="M-12.5 -2 h5" stroke="#fff" stroke-width="1.2"/></g><g class="spin"><circle cx="10" cy="-2" r="4" fill="#14303d"/><path d="M7.5 -2 h5" stroke="#fff" stroke-width="1.2"/></g></g>`,
+  `${BG("sk2")}
+   ${steam(-20,96,.3)}${steam(58,96,0)}${steam(78,96,.45)}${steam(164,96,.2)}${steam(184,96,.65)}${steam(262,96,.9)}
+   <g transform="translate(0,-12)"><g class="s-head"><circle cx="120" cy="86" r="20" fill="#ffe0c2"/>
+    <path d="M100 78 Q120 60 140 78 L140 70 Q120 52 100 70Z" fill="#fff" stroke="#e2d2d2"/>
+    <circle cx="99" cy="70" r="9" fill="#fff" stroke="#e2d2d2"/><circle cx="141" cy="70" r="9" fill="#fff" stroke="#e2d2d2"/>
+    <path d="M96 70 a3 3 0 1 1 3 3 M138 70 a3 3 0 1 1 3 3" stroke="#e2d2d2" fill="none"/>
+    <path d="M107 86 q4 -4 8 0 M125 86 q4 -4 8 0 M116 94 q4 3 8 0" stroke="#14303d" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <ellipse cx="106" cy="92" rx="4" ry="2.4" fill="#ffb3b3"/><ellipse cx="134" cy="92" rx="4" ry="2.4" fill="#ffb3b3"/></g></g>
+   <rect x="44" y="96" width="152" height="12" rx="6" class="sea1"/>
+   ${[[90,0],[150,.35],[110,.7]].map(([x,d])=>`<circle class="s-bub" style="animation-delay:${d}s" cx="${x}" cy="100" r="2.5" fill="#fff"/>`).join("")}
+   <rect x="38" y="102" width="164" height="36" rx="14" fill="#c8915a"/><path d="M70 104 v32 M100 104 v32 M140 104 v32 M170 104 v32" stroke="#a87244" stroke-width="2"/>`,
+  `${BG("sk")}<circle class="sunc" cx="150" cy="80" r="12"/>
+   <path class="hill" d="M160 122 Q196 70 250 84 Q300 96 330 88 V122Z"/><path class="hill" d="M-90 100 Q-60 84 -20 108 V122 H-90Z"/>
+   <path class="ink" opacity=".75" d="M24 124 L30 42 L36 42 L42 124Z"/><path class="ink" opacity=".75" d="M202 92 L207 24 L213 24 L218 92Z"/>
+   ${wave(116,"sea1",1.8)}${wave(124,"sea2",1.1)}
+   <line class="cable" x1="-90" y1="55" x2="330" y2="13"/>
+   <g class="s-gond"><path d="M0 0 V12" stroke="#14303d" stroke-width="1.5"/><rect x="-6" y="-2" width="12" height="4" rx="2" fill="#14303d"/><rect x="-15" y="12" width="30" height="24" rx="7" fill="#e0533d"/><rect x="-11" y="16" width="9" height="9" rx="2" fill="#dff3fb"/><rect x="2" y="16" width="9" height="9" rx="2" fill="#dff3fb"/><rect x="-15" y="30" width="30" height="3" fill="#fff" opacity=".6"/></g>`,
+  `${BG("sk")}
+   ${[[-84,70,28,58],[-52,48,24,80],[-22,80,26,48],[10,62,30,66],[44,42,26,86],[74,72,30,56],[150,52,28,76],[182,32,24,96],[210,66,30,62],[246,46,26,82],[278,74,30,54],[312,56,20,72]].map(([x,y,w,h])=>`<rect class="bld" x="${x}" y="${y}" width="${w}" height="${h}" rx="3"/>`).join("")}
+   <rect class="gr" x="-90" y="128" width="420" height="22"/>
+   <g class="s-roll"><path d="M-6 -40 V-46 H6 V-40" stroke="#14303d" stroke-width="2.5" fill="none"/><rect x="-14" y="-40" width="28" height="34" rx="5" fill="#7a4fc4"/><rect x="-14" y="-28" width="28" height="4" fill="#f0a14a"/><circle cx="-8" cy="-3" r="3" fill="#14303d"/><circle cx="8" cy="-3" r="3" fill="#14303d"/></g>
+   <g transform="translate(160,128)"><g class="s-hop">${BAG("#ef7b9a")}</g></g>
+   <g transform="translate(184,128)"><g class="s-hop" style="animation-delay:.25s">${BAG("#f0a14a")}</g></g>
+   ${steam(214,104,0)}
+   <g transform="translate(214,128)"><path d="M-8 -20 H8 L6 0 H-6Z" fill="#fff" stroke="#b8c7cf"/><rect x="-9" y="-24" width="18" height="5" rx="2" fill="#7b4a2a"/><rect x="-7" y="-14" width="14" height="6" fill="#c8915a"/></g>`,
+  `${BG("sk")}${clouds([[60,112],[150,36],[210,100]])}
+   ${[[0,0],[14,.45],[-10,.9]].map(([dy,d])=>`<g transform="translate(0,${dy})"><g class="s-heart" style="animation-delay:${d}s">${HEART}</g></g>`).join("")}
+   <g class="s-cruise">${PLANE}</g>`
+  ];
+  const C=["✈️ 出發！飛向釜山","⛵ 鑽石灣遊艇","🛷 Skyline Luge 衝啊","♨️ SPA LAND 汗蒸幕","🚡 松島海上纜車","🧳 搬家到西面","💗 回家囉"];
+  const el=document.getElementById("scene");
+  let shown=-1;
+  function show(i){ if(i===shown) return; shown=i; el.innerHTML=`<svg viewBox="-90 0 420 150" preserveAspectRatio="xMidYMid slice">${S[i]}</svg><span class="chip">${C[i]}</span>`; }
+  const _r=renderDay; renderDay=function(){ _r(); show(cur); };
+  show(cur);
+})();
+</script>
+
+</body>
+</html>
